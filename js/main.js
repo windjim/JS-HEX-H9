@@ -15,10 +15,15 @@ function init() {
 init();
 // 抓取產品
 function getProductList() {
-  axios.get(`${apiUrl}/${api_path}/products`).then(function (res) {
-    productTotalData = res.data.products;
-    renderProductList();
-  });
+  axios
+    .get(`${apiUrl}/${api_path}/products`)
+    .then(function (res) {
+      productTotalData = res.data.products;
+      renderProductList();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 // 渲染productList
@@ -97,7 +102,7 @@ function renderCartList() {
   cartList.innerHTML = cartTotalData
     .map((item) => cartHtmlStructure(item))
     .join("");
-  finalTotal.textContent = finalTotalPrice;
+  finalTotal.textContent = `NT$${finalTotalPrice}`;
 }
 
 // 購物車HTML結構
