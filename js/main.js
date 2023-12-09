@@ -1,10 +1,19 @@
-import axios from "../node_modules/axios/dist/esm/axios.js";
+// import axios from "../node_modules/axios/dist/esm/axios.js";
+
 // 變數設定
 const productList = document.querySelector(".productWrap");
 const productSelect = document.querySelector(".productSelect");
 const cartList = document.querySelector(".shoppingCartContent");
 const deleteCartAllBtn = document.querySelector(".discardAllBtn");
 const finalTotal = document.querySelector(".finalTotalPrice");
+
+const orderInfoBtn = document.querySelector(".orderInfo-btn");
+const customerName = document.querySelector("#customerName");
+const customerPhone = document.querySelector("#customerPhone");
+const customerEmail = document.querySelector("#customerEmail");
+const customerAddress = document.querySelector("#customerAddress");
+const tradeWay = document.querySelector("#tradeWay");
+
 let productTotalData;
 let cartTotalData;
 let finalTotalPrice;
@@ -193,8 +202,63 @@ function deleteAllCartNumber() {
       console.log(err);
     });
 }
+
 // 刪除購物車全部監聽
 deleteCartAllBtn.addEventListener("click", (e) => {
   e.preventDefault();
   deleteAllCartNumber();
 });
+
+// 送出訂單監聽
+orderInfoBtn.addEventListener("click", (e) => {
+  e.preventDefault();
+  if (cartTotalData.length === 0) {
+    alert("購物車內容不能為空");
+    return;
+  }
+  if (
+    customerName.value === "" ||
+    customerPhone.value === "" ||
+    customerEmail.value === "" ||
+    customerAddress.value === "" ||
+    tradeWay.value === ""
+  ) {
+    alert("請填寫訂單資訊");
+    return;
+  }
+  addOrderInfo();
+});
+
+//發送訂單資訊
+function addOrderInfo() {
+  axios
+    .post(`${apiUrl}/${api_path}/orders`, {
+      data: {
+        user: {
+          name: `${customerName.value}`,
+          tel: `${customerPhone.value}`,
+          email: `${customerEmail.value}`,
+          address: `${customerAddress.value}`,
+          payment: `${tradeWay.value}`,
+        },
+      },
+    })
+    .then((res) => {
+      console.log(res);
+      alert("送出訂單成功");
+      formInputReset();
+      getCartList();
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}
+
+// 清空表單輸入值
+function formInputReset() {
+  customerName.value = "";
+  customerPhone.value = "";
+  customerEmail.value = "";
+  customerAddress.value = "";
+  tradeWay.selectedIndex = 0;
+}
